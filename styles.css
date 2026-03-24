@@ -6,15 +6,16 @@
 
 body {
     font-family: 'Orbitron', sans-serif;
-    background: linear-gradient(to bottom, #3a7bd5, #80d0f0);
+    background:
+        repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,215,0,0.05) 20px, rgba(255,215,0,0.05) 21px),
+        #1e3a6e;
     height: 100vh;
     overflow: hidden;
-    color: white;
+    color: #ffd700;
 }
 
 #screen-menu h1,
 #screen-gameover h1,
-#combo-display,
 #new-record {
     font-family: 'VT323', monospace;
 }
@@ -23,7 +24,8 @@ body {
     display: none;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    padding-top: 10vh;
     height: 100vh;
     width: 100%;
     text-align: center;
@@ -32,4 +34,115 @@ body {
 
 .screen.active {
     display: flex;
+}
+
+
+#hud {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    font-size: 1.2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+
+#game-area {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 50px);
+    overflow: hidden;
+    background: url('images/farm.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+
+.game-object {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
+    user-select: none;
+    object-fit: contain;
+}
+
+
+button {
+    padding: 22px 35px;
+    font-size: 1.4rem;
+    font-family: 'Orbitron', sans-serif;
+    border: 2px solid #1a1a2e;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #1a1a2e;
+    color: white;
+    transition: transform 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    background: #2a2a4e;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu-buttons button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 420px;
+}
+
+.emoji-right {
+    font-size: 1.8rem;
+}
+
+#screen-menu h1 {
+    font-size: 6rem;
+}
+
+#instructions {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    color: #e65100;
+    padding: 12px 18px;
+    border-radius: 8px;
+    text-align: left;
+    font-size: 0.7rem;
+    line-height: 1.6;
+    cursor: pointer;
+}
+
+#instructions h4 {
+    font-size: 0.85rem;
+}
+
+.instructions-content {
+    display: none;
+    margin-top: 8px;
+}
+
+#instructions.open .instructions-content {
+    display: block;
+}
+
+#high-scores {
+    position: absolute;
+    bottom: 30px;
+}
+
+#new-record {
+    color: #ffd600;
+    font-size: 2rem;
 }
