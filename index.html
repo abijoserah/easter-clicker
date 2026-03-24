@@ -1,0 +1,47 @@
+  <html lang="fr">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>PutaClic - Special Paques</title>
+      <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+ <div id="screen-menu" class="screen active">
+          <h1>PutaClic</h1>
+          <p>Special Paques</p>
+
+          <div class="menu-buttons">
+              <button data-difficulty="easy">Petit poussin</button>
+              <button data-difficulty="medium">Lapin malin</button>
+              <button data-difficulty="hard">Chasseur d'oeufs</button>
+          </div>
+
+          <div id="high-scores">
+              <h3>Meilleurs scores</h3>
+              <p>Petit poussin : <span id="high-easy">0</span></p>
+              <p>Lapin malin : <span id="high-medium">0</span></p>
+              <p>Chasseur d'oeufs : <span id="high-hard">0</span></p>
+          </div>
+      </div>
+
+       <div id="screen-game" class="screen">
+          <div id="hud">
+              <span>Score : <span id="score">0</span></span>
+              <span id="combo-display"></span>
+              <span>Temps : <span id="timer">60</span>s</span>
+          </div>
+          <div id="game-area"></div>
+      </div>
+
+      <div id="screen-gameover" class="screen">
+          <h1>Fin de partie !</h1>
+          <p>Ton score : <span id="final-score">0</span></p>
+          <p id="new-record" style="display:none;">Nouveau record !</p>
+          <button id="btn-replay">Rejouer</button>
+          <button id="btn-menu">Menu</button>
+      </div>
+
+      <script src="script.js"></script>
+  </body>
+  </html>
