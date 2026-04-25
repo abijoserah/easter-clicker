@@ -2,8 +2,13 @@
     --color-bg: #14120f;
     --color-text: #ede7dc;
     --color-accent: #d4943a;
-    --font-heading: 'VT323', monospace;
-    --font-text: 'Orbitron', sans-serif;
+    --color-border: #4a4540;
+    --color-panel-1: #3a3632;
+    --color-panel-2: #2a2725;
+    --color-panel-3: #1f1d1b;
+    --font-heading: "VT323", monospace;
+    --font-text: "Orbitron", sans-serif;
+    --font-fantasy: "MedievalSharp", cursive;
 }
 
 * {
@@ -15,327 +20,528 @@
 body {
     font-family: var(--font-text);
     background: var(--color-bg);
-    height: 100vh;
-    overflow: hidden;
     color: var(--color-text);
+    height: 100dvh;
+    overflow: hidden;
+}
+
+body.modal-open {
+    overflow: hidden;
 }
 
 .screen {
     display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding-top: 10vh;
-    height: 100vh;
     width: 100%;
-    text-align: center;
-    gap: 20px;
+    height: 100dvh;
 }
 
 .screen.active {
     display: flex;
 }
 
+button {
+    border: 1px solid rgba(237, 231, 220, 0.2);
+    border-radius: 10px;
+    background: rgba(20, 18, 15, 0.85);
+    color: var(--color-text);
+    font-family: var(--font-text);
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+button:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    box-shadow: 0 6px 18px rgba(212, 148, 58, 0.22);
+}
+
 #screen-menu {
     position: relative;
-    overflow: hidden;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(10px, 1.8vh, 18px);
+    padding: clamp(16px, 2.4vh, 26px) clamp(12px, 3vw, 32px);
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 #screen-menu::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: url('assets/bg-castle.jpg') center/103% no-repeat;
+    background: url("assets/bg-castle.jpg") center/cover no-repeat;
     filter: blur(3px);
     transform: scale(1.05);
     z-index: -1;
 }
 
 .title-logo {
-    width: clamp(300px, 50vw, 600px);
+    width: min(92vw, clamp(360px, 54vw, 760px));
+    max-height: min(35dvh, 360px);
     height: auto;
     object-fit: contain;
-    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.5));
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.55));
 }
 
-
-#instructions {
-    position: absolute;
-    top: 20px;
-    right: 20px;
+#instructions,
+#high-scores {
     background:
-        url('assets/cracks.png') center/cover no-repeat,
-        linear-gradient(170deg, #3a3632 0%, #2a2725 40%, #1f1d1b 100%);
-    border: 2px solid #4a4540;
-    color: var(--color-text);
-    font-family: 'MedievalSharp', cursive;
-    padding: 14px 20px;
+        url("assets/cracks.png") center/cover no-repeat,
+        linear-gradient(
+            170deg,
+            var(--color-panel-1) 0%,
+            var(--color-panel-2) 40%,
+            var(--color-panel-3) 100%
+        );
+    border: 2px solid var(--color-border);
     border-radius: 8px;
-    text-align: left;
-    font-size: 0.75rem;
-    line-height: 1.8;
-    cursor: pointer;
     box-shadow:
         inset 0 2px 4px rgba(255, 255, 255, 0.06),
         inset 0 -2px 4px rgba(0, 0, 0, 0.5),
         0 4px 12px rgba(0, 0, 0, 0.6);
 }
 
-#instructions h4 {
-    font-family: 'MedievalSharp', cursive;
-    font-size: 0.8rem;
+#instructions {
+    position: fixed;
+    top: clamp(10px, 2.2vh, 22px);
+    right: clamp(10px, 2.2vw, 24px);
+    width: min(360px, 35vw);
+    max-height: calc(100dvh - 24px);
+    text-align: left;
+    font-family: var(--font-fantasy);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    padding: 12px 14px;
+    overflow: hidden;
+    z-index: 40;
+}
+
+#btn-instructions {
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
     color: var(--color-accent);
+    font-family: var(--font-fantasy);
+    font-size: 0.95rem;
+    text-align: left;
+    padding: 0;
+    box-shadow: none;
+}
+
+#btn-instructions:hover {
+    color: #e0c080;
+    border-color: transparent;
+    box-shadow: none;
+    transform: none;
 }
 
 .instructions-content {
-    display: none;
-    margin-top: 8px;
+    margin-top: 10px;
 }
 
-#instructions.open .instructions-content {
-    display: block;
+.instructions-content[hidden] {
+    display: none !important;
+}
+
+.mode-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.instructions-section {
+    color: var(--color-accent);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    margin-bottom: 2px;
+}
+
+.mode-help-btn {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid rgba(212, 148, 58, 0.45);
+    border-radius: 8px;
+    background: rgba(20, 18, 15, 0.9);
+    color: #e7d6b8;
+    font-family: var(--font-fantasy);
+    font-size: 0.92rem;
+    text-align: left;
+}
+
+.mode-help-btn:hover {
+    color: #ffd98a;
+    border-color: #e0b561;
+    transform: translateY(-1px);
+}
+
+#high-scores {
+    position: fixed;
+    top: clamp(10px, 2.2vh, 22px);
+    left: clamp(10px, 2.2vw, 24px);
+    width: min(340px, 34vw);
+    text-align: left;
+    font-family: var(--font-fantasy);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    padding: 12px 14px;
+    z-index: 35;
+}
+
+#high-scores h3 {
+    color: var(--color-accent);
+    font-size: 1rem;
+    margin-bottom: 4px;
+}
+
+.menu-buttons {
+    width: min(94vw, 540px);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+}
+
+.menu-buttons button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    min-height: clamp(54px, 8vh, 72px);
+    padding: 14px 20px;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    background:
+        url("assets/cracks.png") center/cover no-repeat,
+        linear-gradient(
+            170deg,
+            var(--color-panel-1) 0%,
+            var(--color-panel-2) 40%,
+            var(--color-panel-3) 100%
+        );
+    color: #c4a46a;
+    font-family: var(--font-fantasy);
+    font-size: clamp(1rem, 1.8vw, 1.18rem);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-shadow:
+        0 -1px 1px rgba(0, 0, 0, 0.8),
+        0 1px 1px rgba(200, 170, 110, 0.2);
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.06),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.menu-buttons button:hover {
+    color: #e0c080;
+    border-color: #5a5550;
+    transform: translateY(-1px);
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.08),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 8px 20px rgba(0, 0, 0, 0.55);
+}
+
+.mode-label {
+    text-align: center;
+}
+
+.btn-icon {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
+#screen-game {
+    position: relative;
+    padding-top: 0;
 }
 
 #hud {
-    display: flex;
-    justify-content: space-between;
-    padding: 14px 28px;
-    background: rgba(20, 18, 15, 0.4);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    font-family: 'MedievalSharp', cursive;
-    font-size: 1.6rem;
-    color: var(--color-accent);
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    width: auto;
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px 14px;
+    padding: 12px 16px;
+    background: rgba(20, 18, 15, 0.44);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--color-accent);
+    font-family: var(--font-fantasy);
+    font-size: clamp(1.05rem, 2vw, 1.45rem);
+    text-shadow:
+        0 0 10px rgba(212, 148, 58, 0.5),
+        0 2px 6px rgba(0, 0, 0, 0.9);
     border-radius: 0 0 14px 14px;
-    z-index: 10;
-    text-shadow: 0 0 10px rgba(212, 148, 58, 0.5), 0 2px 6px rgba(0, 0, 0, 0.9);
 }
 
-#screen-game {
-    padding-top: 0;
+#hud > span {
+    white-space: nowrap;
+}
+
+.hud-lives {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lives-icons {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 20px;
+}
+
+.life-icon {
+    width: 20px;
+    height: 20px;
+    background: url("assets/shield-easy.png") center/contain no-repeat;
+    filter: drop-shadow(0 0 6px rgba(212, 148, 58, 0.6));
+    opacity: 0.95;
+}
+
+.life-icon.is-lost {
+    opacity: 0.22;
+    filter: grayscale(1) brightness(0.5);
+}
+
+.life-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(8, 7, 5, 0.48);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.life-modal.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.life-modal-panel {
+    min-width: min(88vw, 360px);
+    max-width: 90vw;
+    padding: 14px 18px;
+    border: 2px solid var(--color-border);
+    border-radius: 10px;
+    background:
+        url("assets/cracks.png") center/cover no-repeat,
+        linear-gradient(170deg, #3a3632 0%, #2a2725 40%, #1f1d1b 100%);
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.06),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 10px 22px rgba(0, 0, 0, 0.7);
+    color: var(--color-accent);
+    font-family: var(--font-fantasy);
+    font-size: clamp(1rem, 2.6vw, 1.35rem);
+    text-align: center;
+    text-shadow: 0 0 12px rgba(212, 148, 58, 0.45);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translateY(10px) scale(0.94);
+    opacity: 0;
+    transition:
+        transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.2s ease;
+}
+
+.life-modal.is-open .life-modal-panel {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+#life-modal-title {
+    margin: 0 0 4px;
+    color: #e6bf7a;
+    font-family: var(--font-fantasy);
+    font-size: clamp(1.08rem, 2.8vw, 1.45rem);
+}
+
+#life-modal-text {
+    margin: 0 0 12px;
+}
+
+.life-modal-resume {
+    padding: 8px 14px;
+    border: 1px solid rgba(212, 148, 58, 0.5);
+    border-radius: 8px;
+    background: rgba(20, 18, 15, 0.82);
+    color: #e7d6b8;
+    font-family: var(--font-fantasy);
+    font-size: 0.86rem;
+}
+
+.life-modal-resume:hover {
+    color: #ffd98a;
+    border-color: #e0b561;
+    transform: translateY(-1px);
+}
+
+#combo {
+    display: inline-block;
+    min-width: 2.2ch;
+    transition:
+        transform 0.2s ease,
+        color 0.2s ease,
+        text-shadow 0.2s ease;
+}
+
+#combo.combo-active {
+    color: #ffd700;
+    transform: scale(1.08);
+    text-shadow:
+        0 0 12px rgba(255, 215, 0, 0.8),
+        0 2px 6px rgba(0, 0, 0, 0.9);
+}
+
+.hud-btn {
+    padding: 7px 11px;
+    border: 1px solid rgba(212, 148, 58, 0.45);
+    border-radius: 8px;
+    background: rgba(20, 18, 15, 0.78);
+    color: #e7d6b8;
+    font-family: var(--font-fantasy);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.hud-btn:hover {
+    color: #ffd98a;
+    border-color: #e0b561;
+    transform: translateY(-1px);
+}
+
+.hud-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 #game-area {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     overflow: hidden;
-    background: url('assets/bg-castle.jpg') center/103% no-repeat;
+    background: url("assets/bg-castle.jpg") center/cover no-repeat;
 }
 
 .game-object {
     position: absolute;
-    width: 300px;
-    height: 300px;
+    width: clamp(130px, 20vw, 250px);
+    height: clamp(130px, 20vw, 250px);
     cursor: pointer;
     user-select: none;
     object-fit: contain;
     filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
 }
 
-button {
-    padding: 18px 32px;
-    font-size: 1.1rem;
-    font-family: var(--font-text);
-    border: 1px solid rgba(237, 231, 220, 0.2);
-    border-radius: 10px;
-    cursor: pointer;
-    background: rgba(20, 18, 15, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    color: var(--color-text);
-    transition: all 0.25s ease;
-}
-
-button:hover {
-    transform: scale(1.03);
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-    box-shadow: 0 6px 18px rgba(212, 148, 58, 0.2);
-}
-
-.menu-buttons button:hover {
-    background:
-        url('assets/cracks.png') center/cover no-repeat,
-        linear-gradient(170deg, #45403b 0%, #332f2c 40%, #262321 100%);
-    border-color: #5a5550;
-    color: #e0c080;
-    box-shadow:
-        inset 0 2px 4px rgba(255, 255, 255, 0.08),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
-        0 6px 18px rgba(0, 0, 0, 0.5);
-}
-
-.menu-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 30px;
-}
-
-.menu-buttons button {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 420px;
-    font-family: 'MedievalSharp', cursive;
-    font-weight: 700;
-    font-size: 1.15rem;
-    letter-spacing: 0.05em;
-    color: #c4a46a;
-    background:
-        url('assets/cracks.png') center/cover no-repeat,
-        linear-gradient(170deg, #3a3632 0%, #2a2725 40%, #1f1d1b 100%);
-    border: 2px solid #4a4540;
-    border-radius: 8px;
-    text-shadow:
-        0 -1px 1px rgba(0, 0, 0, 0.8),
-        0 1px 1px rgba(200, 170, 110, 0.2);
-    box-shadow:
-        inset 0 2px 4px rgba(255, 255, 255, 0.06),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
-        0 4px 12px rgba(0, 0, 0, 0.6);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    overflow: hidden;
-}
-
-.menu-buttons button::before,
-.menu-buttons button::after {
-    content: "⚜";
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1.4rem;
-    color: rgba(140, 115, 75, 0.45);
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+#game-area.paused .game-object {
     pointer-events: none;
+    filter: grayscale(0.55) brightness(0.7);
 }
 
-.menu-buttons button::before {
-    left: 10px;
-}
-
-.menu-buttons button::after {
-    right: 10px;
-    transform: translateY(-50%) scaleX(-1);
-}
-
-.btn-icon {
-    width: 52px;
-    height: 52px;
-    object-fit: contain;
-    vertical-align: middle;
-    margin: -14px 0;
+#game-area.paused::after {
+    content: "PAUSE";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(20, 18, 15, 0.35);
+    color: rgba(255, 255, 255, 0.9);
+    font-family: var(--font-heading);
+    font-size: clamp(3rem, 10vw, 6rem);
+    letter-spacing: 0.1em;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.9);
+    pointer-events: none;
+    z-index: 12;
 }
 
 #screen-gameover {
     position: relative;
-    overflow: hidden;
-    gap: 24px;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    gap: 18px;
+    text-align: center;
+    overflow: hidden;
 }
 
 #screen-gameover::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: url('assets/bg-castle.jpg') center/103% no-repeat;
+    background: url("assets/bg-castle.jpg") center/cover no-repeat;
     filter: blur(3px);
     transform: scale(1.05);
     z-index: -1;
 }
 
-#screen-gameover h1 {
-    font-family: 'MedievalSharp', cursive;
-    font-size: clamp(2rem, 5vw, 3rem);
-    color: var(--color-accent);
+#screen-gameover h1,
+#screen-gameover p,
+#screen-gameover button {
     background:
-        url('assets/cracks.png') center/cover no-repeat,
-        linear-gradient(170deg, #3a3632 0%, #2a2725 40%, #1f1d1b 100%);
-    border: 2px solid #4a4540;
+        url("assets/cracks.png") center/cover no-repeat,
+        linear-gradient(
+            170deg,
+            var(--color-panel-1) 0%,
+            var(--color-panel-2) 40%,
+            var(--color-panel-3) 100%
+        );
+    border: 2px solid var(--color-border);
     border-radius: 8px;
-    padding: 16px 40px;
     box-shadow:
         inset 0 2px 4px rgba(255, 255, 255, 0.06),
         inset 0 -2px 4px rgba(0, 0, 0, 0.5),
         0 4px 12px rgba(0, 0, 0, 0.6);
-    text-shadow:
-        0 -1px 1px rgba(0, 0, 0, 0.8),
-        0 1px 1px rgba(200, 170, 110, 0.2);
+}
+
+#screen-gameover h1 {
+    padding: 14px 34px;
+    color: var(--color-accent);
+    font-family: var(--font-fantasy);
+    font-size: clamp(1.8rem, 4.5vw, 3rem);
 }
 
 #screen-gameover p {
-    font-family: 'MedievalSharp', cursive;
-    font-size: 1.15rem;
-    background:
-        url('assets/cracks.png') center/cover no-repeat,
-        linear-gradient(170deg, #3a3632 0%, #2a2725 40%, #1f1d1b 100%);
-    border: 2px solid #4a4540;
-    border-radius: 8px;
-    padding: 12px 30px;
-    box-shadow:
-        inset 0 2px 4px rgba(255, 255, 255, 0.06),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
-        0 4px 12px rgba(0, 0, 0, 0.6);
+    padding: 10px 22px;
+    font-family: var(--font-fantasy);
+    font-size: clamp(1rem, 2vw, 1.15rem);
 }
 
 #screen-gameover button {
-    font-family: 'MedievalSharp', cursive;
-    background:
-        url('assets/cracks.png') center/cover no-repeat,
-        linear-gradient(170deg, #3a3632 0%, #2a2725 40%, #1f1d1b 100%);
-    border: 2px solid #4a4540;
-    color: #c4a46a;
-    margin-top: 8px;
-    box-shadow:
-        inset 0 2px 4px rgba(255, 255, 255, 0.06),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
-        0 4px 12px rgba(0, 0, 0, 0.6);
-    text-shadow:
-        0 -1px 1px rgba(0, 0, 0, 0.8),
-        0 1px 1px rgba(200, 170, 110, 0.2);
-}
-
-#high-scores {
-    position: absolute;
-    top: 30px;
-    left: 30px;
-    text-align: left;
-    font-family: 'MedievalSharp', cursive;
-    font-size: 0.9rem;
-    line-height: 1.8;
-    background:
-        url('assets/cracks.png') center/cover no-repeat,
-        linear-gradient(170deg, #3a3632 0%, #2a2725 40%, #1f1d1b 100%);
-    border: 2px solid #4a4540;
-    border-radius: 8px;
-    padding: 14px 20px;
-    box-shadow:
-        inset 0 2px 4px rgba(255, 255, 255, 0.06),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
-        0 4px 12px rgba(0, 0, 0, 0.6);
-}
-
-#high-scores h3 {
-    font-family: 'MedievalSharp', cursive;
-    color: var(--color-accent);
+    padding: 12px 22px;
+    margin-top: 6px;
+    font-family: var(--font-fantasy);
     font-size: 1rem;
-    margin-bottom: 6px;
+    color: #c4a46a;
 }
 
 #new-record {
-    font-family: 'MedievalSharp', cursive;
     color: var(--color-accent);
-    font-size: 1.8rem;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
     text-shadow: 0 0 20px rgba(212, 148, 58, 0.5);
 }
 
@@ -350,27 +556,36 @@ button:hover {
 }
 
 @keyframes particle-burst {
-    0% { transform: translate(0, 0) scale(1); opacity: 1; }
-    100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(var(--dx), var(--dy)) scale(0);
+        opacity: 0;
+    }
 }
 
 .floating-score {
     position: fixed;
-    font-family: var(--font-heading);
-    font-size: 3rem;
-    font-weight: bold;
-    color: var(--color-accent);
-    pointer-events: none;
     z-index: 100;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
     transform: translate(-50%, -50%);
     animation: float-up 1s ease-out forwards;
+    font-family: var(--font-heading);
+    font-weight: bold;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--color-accent);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
 }
 
 .floating-score.golden {
-    font-size: 4rem;
+    font-size: clamp(2.5rem, 6vw, 4rem);
     color: #ffd700;
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.4);
+    text-shadow:
+        0 0 20px rgba(255, 215, 0, 0.8),
+        0 0 40px rgba(255, 215, 0, 0.4);
 }
 
 .floating-score.negative {
@@ -379,168 +594,584 @@ button:hover {
 }
 
 @keyframes float-up {
-    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
-    20% { transform: translate(-50%, -50%) scale(1.4); }
-    100% { opacity: 0; transform: translate(-50%, -200%) scale(1); }
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+
+    20% {
+        transform: translate(-50%, -50%) scale(1.35);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -200%) scale(1);
+    }
 }
 
 .red-flash {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle, rgba(255, 0, 0, 0.4), rgba(255, 0, 0, 0.15));
+    background: radial-gradient(
+        circle,
+        rgba(255, 0, 0, 0.4),
+        rgba(255, 0, 0, 0.15)
+    );
     pointer-events: none;
     z-index: 50;
     animation: flash-red 0.5s ease-out forwards;
 }
 
 @keyframes flash-red {
-    0% { opacity: 1; }
-    100% { opacity: 0; }
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 
-@media (max-width: 768px) {
-    .screen {
-        padding-top: 0;
-        gap: 0;
+.help-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(8, 7, 5, 0.72);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+}
+
+.help-modal[hidden] {
+    display: none;
+}
+
+.help-modal::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(212, 148, 58, 0.18),
+            rgba(20, 18, 15, 0) 58%
+        ),
+        conic-gradient(
+            from 0deg,
+            rgba(212, 148, 58, 0),
+            rgba(212, 148, 58, 0.18),
+            rgba(212, 148, 58, 0)
+        );
+    animation: modal-halo-spin 12s linear infinite;
+    pointer-events: none;
+}
+
+.help-modal.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.help-modal.is-closing {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.help-modal-panel {
+    width: min(760px, 94vw);
+    max-height: min(84dvh, 780px);
+    overflow: auto;
+    text-align: left;
+    color: var(--color-text);
+    border: 2px solid var(--color-border);
+    border-radius: 12px;
+    padding: 20px 22px 16px;
+    background:
+        url("assets/cracks.png") center/cover no-repeat,
+        linear-gradient(170deg, #35312e 0%, #272422 45%, #1b1917 100%);
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.06),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 12px 28px rgba(0, 0, 0, 0.7);
+    transform: translateY(26px) scale(0.94);
+    opacity: 0;
+    transition:
+        transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.22s ease;
+}
+
+.help-modal.is-open .help-modal-panel {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+.help-modal.is-closing .help-modal-panel {
+    transform: translateY(14px) scale(0.97);
+    opacity: 0;
+}
+
+.help-modal-close {
+    float: right;
+    padding: 6px 12px;
+    border: 1px solid rgba(212, 148, 58, 0.4);
+    border-radius: 8px;
+    background: rgba(20, 18, 15, 0.8);
+    color: #e7d6b8;
+    font-family: var(--font-fantasy);
+    font-size: 0.75rem;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        color 0.2s ease;
+}
+
+.help-modal-close:hover {
+    transform: translateY(-1px);
+    color: #ffd98a;
+    box-shadow: 0 6px 16px rgba(212, 148, 58, 0.3);
+}
+
+.help-modal-panel h2 {
+    color: var(--color-accent);
+    font-family: var(--font-fantasy);
+    font-size: clamp(1.4rem, 3.6vw, 2rem);
+    margin-bottom: 14px;
+    text-shadow: 0 0 14px rgba(212, 148, 58, 0.32);
+}
+
+.help-modal-content {
+    display: grid;
+    gap: 12px;
+}
+
+.help-section {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.help-modal.is-open .help-section {
+    animation: help-rise 0.35s ease forwards;
+}
+
+.help-modal.is-open .help-section:nth-child(1) {
+    animation-delay: 0.08s;
+}
+
+.help-modal.is-open .help-section:nth-child(2) {
+    animation-delay: 0.13s;
+}
+
+.help-modal.is-open .help-section:nth-child(3) {
+    animation-delay: 0.18s;
+}
+
+.help-section h3 {
+    margin-bottom: 6px;
+    color: #e6bf7a;
+    font-family: var(--font-fantasy);
+    font-size: 1.05rem;
+}
+
+.help-section ul {
+    margin: 0;
+    padding-left: 20px;
+    line-height: 1.5;
+}
+
+.help-section li {
+    margin-bottom: 4px;
+}
+
+@keyframes help-rise {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
 
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes modal-halo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 1200px), (max-height: 820px) {
     #screen-menu {
-        justify-content: space-evenly;
-    }
-
-    #screen-menu::before {
-        background: url('assets/bg-castle-mobile.png') center/cover no-repeat;
-    }
-
-    .title-logo {
-        width: clamp(200px, 70vw, 400px);
-        margin-top: 12vh;
-    }
-
-    .menu-buttons {
-        margin-top: -8vh;
+        justify-content: flex-start;
+        padding-top: clamp(84px, 15vh, 130px);
     }
 
     #instructions {
         top: 10px;
         right: 10px;
-        padding: 10px 14px;
-        font-size: 0.65rem;
-        max-width: 45vw;
+        width: min(300px, 33vw);
+        max-height: min(56vh, 430px);
+        font-size: 0.72rem;
+        padding: 10px 12px;
     }
 
     #high-scores {
-        position: relative;
-        top: auto;
-        left: auto;
-        text-align: center;
-        width: 85vw;
-        max-width: 420px;
-        font-size: 0.8rem;
-    }
-
-    .menu-buttons button {
-        width: 85vw;
-        max-width: 420px;
-        font-size: 1rem;
-        padding: 14px 24px;
-    }
-
-    .menu-buttons button::before,
-    .menu-buttons button::after {
-        font-size: 1.1rem;
-    }
-
-    .btn-icon {
-        width: 40px;
-        height: 40px;
-        margin: -10px 0;
-    }
-
-    #hud {
-        padding: 10px 18px;
-        font-size: 1.2rem;
-    }
-
-    #game-area {
-        background: url('assets/bg-castle-mobile.png') center/cover no-repeat;
-    }
-
-    .game-object {
-        width: 150px;
-        height: 150px;
-    }
-
-    .floating-score {
-        font-size: 2rem;
-    }
-
-    .floating-score.golden {
-        font-size: 2.5rem;
-    }
-
-    #screen-gameover {
-        justify-content: center;
-    }
-
-    #screen-gameover::before {
-        background: url('assets/bg-castle-mobile.png') center/cover no-repeat;
-    }
-
-    #screen-gameover h1 {
-        font-size: clamp(1.4rem, 5vw, 2rem);
-        padding: 12px 24px;
-    }
-
-    #screen-gameover p {
-        font-size: 1rem;
-        padding: 10px 20px;
-    }
-
-    #screen-gameover button {
-        padding: 14px 24px;
-        font-size: 1rem;
-    }
-
-    #new-record {
-        font-size: 1.4rem;
-    }
-}
-
-@media (max-width: 400px) {
-    .screen {
-        padding-top: 3vh;
-        gap: 10px;
+        top: 10px;
+        left: 10px;
+        width: min(280px, 30vw);
+        text-align: left;
+        font-size: 0.82rem;
+        line-height: 1.45;
+        padding: 10px 12px;
     }
 
     .title-logo {
-        width: 85vw;
+        width: min(94vw, 560px);
+        max-height: none;
+    }
+}
+
+@media (max-width: 768px) {
+    #screen-menu::before,
+    #screen-gameover::before,
+    #game-area {
+        background-image: url("assets/bg-castle-mobile.png");
     }
 
-    .menu-buttons button {
-        width: 90vw;
-        font-size: 0.9rem;
-        padding: 12px 18px;
-    }
-
-    .btn-icon {
-        width: 34px;
-        height: 34px;
-        margin: -8px 0;
+    #screen-menu {
+        gap: 10px;
+        padding: clamp(92px, 16vh, 130px) 12px 12px;
     }
 
     #instructions {
-        max-width: 55vw;
-        font-size: 0.6rem;
+        top: 8px;
+        right: 8px;
+        width: min(48vw, 220px);
+        max-height: 44vh;
+        font-size: 0.64rem;
+        padding: 8px 9px;
     }
 
-    .game-object {
-        width: 110px;
-        height: 110px;
+    #high-scores {
+        top: 8px;
+        left: 8px;
+        width: min(46vw, 210px);
+        font-size: 0.68rem;
+        line-height: 1.28;
+        padding: 8px 9px;
+        text-align: left;
+    }
+
+    .menu-buttons {
+        width: min(96vw, 430px);
+    }
+
+    #btn-instructions {
+        font-size: 0.78rem;
+    }
+
+    .title-logo {
+        width: min(96vw, 430px);
+    }
+
+    .mode-help-btn {
+        font-size: 0.76rem;
+        padding: 6px 8px;
+    }
+
+    .menu-buttons button {
+        min-height: 52px;
+        padding: 12px 16px;
+        font-size: 0.98rem;
+    }
+
+    .btn-icon {
+        width: 36px;
+        height: 36px;
     }
 
     #hud {
-        padding: 8px 14px;
-        font-size: 1rem;
+        font-size: 1.05rem;
+        gap: 8px;
+        padding: 10px 12px;
+    }
+
+    .hud-btn {
+        font-size: 0.72rem;
+        padding: 6px 9px;
+    }
+
+    .hud-lives {
+        gap: 6px;
+    }
+
+    .life-icon {
+        width: 16px;
+        height: 16px;
+    }
+
+    .life-modal-panel {
+        min-width: min(92vw, 320px);
+        font-size: 0.95rem;
+        padding: 12px 14px;
+    }
+
+    .life-modal-resume {
+        font-size: 0.78rem;
+        padding: 7px 11px;
+    }
+
+    .game-object {
+        width: clamp(95px, 22vw, 150px);
+        height: clamp(95px, 22vw, 150px);
+    }
+
+    .help-modal {
+        padding: 12px;
+    }
+
+    .help-modal-panel {
+        width: min(96vw, 760px);
+        max-height: 88dvh;
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    #screen-menu {
+        padding: clamp(86px, 14vh, 120px) 10px 10px;
+    }
+
+    #instructions {
+        width: min(50vw, 180px);
+        font-size: 0.6rem;
+    }
+
+    #high-scores {
+        width: min(48vw, 170px);
+        font-size: 0.63rem;
+        line-height: 1.24;
+    }
+
+    .menu-buttons,
+    .title-logo {
+        width: 96vw;
+    }
+
+    #btn-instructions {
+        font-size: 0.72rem;
+    }
+
+    .menu-buttons button {
+        font-size: 0.92rem;
+    }
+
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    #screen-gameover h1 {
+        padding: 12px 20px;
+    }
+
+    #screen-gameover p,
+    #screen-gameover button {
+        font-size: 0.95rem;
+    }
+
+    .help-modal-panel {
+        padding: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .help-modal,
+    .help-modal-panel,
+    .help-modal-close,
+    .help-section,
+    .life-modal,
+    .life-modal-panel,
+    #combo {
+        transition: none;
+        animation: none !important;
+    }
+
+    .help-modal::before {
+        animation: none;
+    }
+}
+
+/* Final responsive lock: fixed menu, no scroll, safe corner panels */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+:root {
+    --menu-edge-gap: clamp(12px, 2.4vw, 24px);
+}
+
+body,
+.screen,
+#screen-menu {
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+}
+
+#screen-menu {
+    justify-content: center;
+    align-items: center;
+    padding: clamp(92px, 12vh, 132px) clamp(10px, 3vw, 26px)
+        clamp(12px, 4vh, 32px);
+    gap: clamp(8px, 1.6vh, 14px);
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+
+#instructions,
+#high-scores {
+    top: clamp(10px, 2.2vh, 22px);
+}
+
+#instructions {
+    left: auto;
+    right: var(--menu-edge-gap);
+    width: auto;
+    min-width: 154px;
+    max-width: min(350px, calc(100vw - (var(--menu-edge-gap) * 2)));
+}
+
+#instructions.open {
+    width: min(350px, calc(100vw - (var(--menu-edge-gap) * 2)));
+    max-width: min(350px, calc(100vw - (var(--menu-edge-gap) * 2)));
+    max-height: min(70dvh, 560px);
+    overflow: auto;
+}
+
+#high-scores {
+    left: var(--menu-edge-gap);
+    width: min(310px, 32vw);
+    max-width: min(310px, calc(100vw - (var(--menu-edge-gap) * 2)));
+}
+
+@media (max-width: 1024px), (max-height: 800px) {
+    #screen-menu {
+        padding-top: clamp(84px, 11vh, 116px);
+        gap: clamp(7px, 1.4vh, 12px);
+    }
+
+    .title-logo {
+        width: min(94vw, 500px);
+        max-height: min(24dvh, 230px);
+    }
+
+    .menu-buttons {
+        width: min(95vw, 430px);
+    }
+
+    .menu-buttons button {
+        min-height: clamp(46px, 7vh, 58px);
+        padding: 10px 14px;
+        font-size: clamp(0.88rem, 1.8vw, 1rem);
+    }
+
+    #instructions {
+        min-width: 136px;
+        max-width: min(300px, 42vw);
+        font-size: 0.7rem;
+        padding: 9px 10px;
+    }
+
+    #instructions.open {
+        width: min(320px, calc(100vw - (var(--menu-edge-gap) * 2)));
+        max-width: min(320px, calc(100vw - (var(--menu-edge-gap) * 2)));
+        max-height: 62dvh;
+    }
+
+    #high-scores {
+        width: min(238px, 38vw);
+        font-size: 0.74rem;
+        line-height: 1.28;
+        padding: 9px 10px;
+    }
+}
+
+@media (max-width: 720px) {
+    :root {
+        --menu-edge-gap: 10px;
+    }
+
+    #screen-menu {
+        padding: clamp(76px, 10vh, 98px) 8px 8px;
+        gap: 7px;
+    }
+
+    #instructions {
+        min-width: 118px;
+        max-width: min(220px, 48vw);
+        font-size: 0.62rem;
+        padding: 7px 8px;
+    }
+
+    #instructions.open {
+        width: min(280px, calc(100vw - 20px));
+        max-width: calc(100vw - 20px);
+        max-height: 58dvh;
+    }
+
+    #high-scores {
+        width: min(176px, 46vw);
+        font-size: 0.61rem;
+        line-height: 1.2;
+        padding: 7px 8px;
+    }
+
+    .title-logo {
+        width: min(95vw, 390px);
+        max-height: min(19dvh, 170px);
+    }
+
+    .menu-buttons {
+        width: min(95vw, 380px);
+    }
+
+    .menu-buttons button {
+        min-height: 44px;
+        padding: 9px 11px;
+        font-size: 0.84rem;
+    }
+
+    .btn-icon {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+@media (max-width: 380px) {
+    #instructions.open {
+        width: calc(100vw - 14px);
+        max-width: calc(100vw - 14px);
+        right: 7px;
+    }
+
+    #high-scores {
+        min-width: 138px;
+        width: min(172px, 47vw);
+    }
+
+    #btn-instructions {
+        font-size: 0.69rem;
     }
 }
